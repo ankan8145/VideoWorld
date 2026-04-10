@@ -132,6 +132,48 @@ The script will automatically load the weights saved from the previous step.
 
 After training is complete, the model will automatically generate the latent codes for the full video. These codes are created by sequentially merging the clips from the training set and are saved to `./latent_code_infos.pt`. This file is provided for users to train their AR models.
 
+## Reproduce Table 1 on Video-CraftBench
+This repository now includes helper scripts for reproducing a Table-1 style benchmark pipeline.
+
+### 1) Run VideoWorld2 stages
+From `VideoWorld2/`:
+```bash
+bash scripts/reproduce_table1_videoworld2.sh --run-infer
+# or full pipeline:
+# bash scripts/reproduce_table1_videoworld2.sh --run-all
+```
+
+### 2) Prepare Craft-text prompts
+If your benchmark annotations contain step-by-step descriptions:
+```bash
+python3 scripts/table1/build_craft_text_prompts.py \
+  --input datasets/Video-CraftBench/annotations.json \
+  --output datasets/Video-CraftBench/craft_text_prompts.jsonl \
+  --id-key id \
+  --steps-key steps
+```
+
+### 3) Run all compared methods from a manifest
+Copy and edit the template:
+```bash
+cp scripts/table1/manifest.template.json scripts/table1/manifest.local.json
+python3 scripts/table1/run_methods.py \
+  --manifest scripts/table1/manifest.local.json \
+  --output-dir results/table1/logs
+```
+Each method should produce a metrics JSON file (see `scripts/table1/metrics.template.json`) using the paper's exact success rubric.
+
+### 4) Aggregate final table
+```bash
+python3 scripts/table1/aggregate_table1.py \
+  --manifest scripts/table1/manifest.local.json \
+  --output-csv results/table1/table1.csv \
+  --output-md results/table1/table1.md
+```
+
+### Notes
+- Keep all methods aligned on split, resolution, frame count, random seed, and number of samples per task.
+- Full reproduction of paper Table 1 requires external baseline repositories and the exact paper evaluation protocol/rubric.
 
 # Citation
 If you find this project useful in your research, please consider citing:

@@ -1,0 +1,32 @@
+{
+  "common": {
+    "dataset_root": "datasets/Video-CraftBench",
+    "split": "test",
+    "resolution": "480x832",
+    "num_frames": 93,
+    "seed": 0,
+    "num_samples_per_task": 1,
+    "craft_text_prompt_file": "datasets/Video-CraftBench/craft_text_prompts.jsonl"
+  },
+  "methods": [
+    {
+      "name": "videoworld2_image_only",
+      "condition": "image",
+      "command": "bash scripts/test.sh",
+      "metrics_file": "results/table1/videoworld2_image_only.json"
+    },
+    {
+      "name": "videoworld2_craft_text",
+      "condition": "craft-text",
+      "command": "echo \"Run your craft-text-enabled command here\"",
+      "metrics_file": "results/table1/videoworld2_craft_text.json"
+    },
+    {
+      "name": "baseline_example",
+      "condition": "image",
+      "command": "echo \"Run baseline repo command here\"",
+      "metrics_file": "results/table1/baseline_example.json"
+    }
+  ]
+}
+
