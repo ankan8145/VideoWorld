@@ -21,6 +21,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run Table-1 methods from a manifest.")
     parser.add_argument("--manifest", required=True, help="Path to manifest JSON.")
     parser.add_argument("--output-dir", required=True, help="Directory for run logs.")
+    parser.add_argument(
+        "--repo-root",
+        default=None,
+        help="Repository root used as command working directory. Defaults to VideoWorld2 root.",
+    )
     parser.add_argument("--only", nargs="*", default=None, help="Run only selected method names.")
     parser.add_argument("--dry-run", action="store_true", help="Print commands without executing.")
     args = parser.parse_args()
@@ -37,7 +42,8 @@ def main() -> int:
         return 1
 
     selected = set(args.only) if args.only else None
-    repo_root = manifest_path.parents[2] if (manifest_path.parent.name == "table1" and manifest_path.parent.parent.name == "scripts") else Path.cwd()
+    default_repo_root = Path(__file__).resolve().parents[2]
+    repo_root = Path(args.repo_root).resolve() if args.repo_root else default_repo_root
     env = os.environ.copy()
     for k, v in common.items():
         if isinstance(v, (str, int, float)):
@@ -80,4 +86,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

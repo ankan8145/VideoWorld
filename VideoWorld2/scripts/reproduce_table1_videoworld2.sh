@@ -94,6 +94,7 @@ check_dir() {
 }
 
 if [[ "$RUN_WARMUP" -eq 1 || "$RUN_TRAIN" -eq 1 || "$RUN_LATENT" -eq 1 ]]; then
+  # Keep this exact directory name to match current Video-CraftBench release layout.
   check_dir "datasets/Video-CraftBench/Paper_and_Block_clips"
   check_dir "datasets/openx_untar"
   check_file "datasets/openx_videocraft_cache.json"
@@ -128,4 +129,3 @@ if [[ "$RUN_INFER" -eq 1 ]]; then
 fi
 
 echo "Done."
-

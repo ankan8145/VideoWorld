@@ -11,11 +11,11 @@ def load_items(path: Path):
         return json.load(f)
 
 
-def join_steps(steps):
+def build_step_string(steps, step_format):
     if not isinstance(steps, list):
         return ""
     lines = [str(s).strip() for s in steps if str(s).strip()]
-    return " ".join(f"Step {i+1}: {line}" for i, line in enumerate(lines))
+    return " ".join(step_format.format(index=i + 1, step=line) for i, line in enumerate(lines))
 
 
 def main():
@@ -25,6 +25,11 @@ def main():
     parser.add_argument("--id-key", default="id", help="Sample ID key in input.")
     parser.add_argument("--steps-key", default="steps", help="Steps key in input.")
     parser.add_argument("--prefix", default="A high-definition video captures the scene of handicraft production.", help="Prefix text.")
+    parser.add_argument(
+        "--step-format",
+        default="Step {index}: {step}",
+        help="Formatting template for each step. Supports {index} and {step}.",
+    )
     args = parser.parse_args()
 
     items = load_items(Path(args.input))
@@ -37,7 +42,7 @@ def main():
         for item in items:
             sample_id = item.get(args.id_key)
             steps = item.get(args.steps_key, [])
-            prompt = f"{args.prefix} {join_steps(steps)}".strip()
+            prompt = f"{args.prefix} {build_step_string(steps, args.step_format)}".strip()
             f.write(json.dumps({"id": sample_id, "craft_text_prompt": prompt}, ensure_ascii=False) + "\n")
 
     print(f"Wrote prompts to {out_path}")
@@ -45,4 +50,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
